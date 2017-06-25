@@ -1,0 +1,5 @@
+openshift_master_conf_dir: /etc/origin/master
+temp_dir: /tmp
+stylesheet_base_dir: /etc/origin/master/stylesheet
+master_url: master1.example.com:8443
+logo_img: /tmp/sample-openshift-ori.png
