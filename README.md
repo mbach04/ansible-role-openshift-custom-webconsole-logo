@@ -39,6 +39,18 @@ Example Playbook
 
 ~~~
 
+Restart OpenShift Masters
+----------
+~~~
+# Restart Openshift Master Server restart
+
+# Single Master
+ansible masters -m shell -a "systemctl restart atomic-openshift-master"
+
+# Multiple Masters
+ansible masters -m shell -a "systemctl restart atomic-openshift-master-api"
+~~~
+
 License
 -------
 
