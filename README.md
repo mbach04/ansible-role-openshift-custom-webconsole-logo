@@ -35,7 +35,7 @@ Example Playbook
   gather_facts: false
 
    roles:
-      - { role: Jooho.openshift_custom_webconsole_logo, logo_img: "/tmp/sample-openshift-ori.png", master_url: "master1.example.com:8443", login_html_dir: "/etc/origin/master/stylesheet" }
+      - { role: Jooho.openshift_custom_webconsole_logo, logo_img: "logo.png", master_url: "master1.example.com:8443", login_html_dir: "/etc/origin/master/stylesheet" }
 
 ~~~
 
