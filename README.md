@@ -36,7 +36,6 @@ Example Playbook
 
    roles:
       - { role: ansible-role-openshift-custom-webconsole-logo, logo_img: "/tmp/logo.png", master_url: "master1.example.com:8443", stylesheet_base_dir: "/etc/origin/master/stylesheet" }
-
 ~~~
 
 Restart OpenShift Masters
