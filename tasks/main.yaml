@@ -31,13 +31,13 @@
         - "{{stylesheet_base_dir}}/images"
 
   - name: Copy web console logo under {stylesheet_base_dir}}/images
-    copy: src={{logo_img}} dest="{{stylesheet_base_dir}}/images"
+    copy: src={{logo_img}} dest="{{stylesheet_base_dir}}/images" force={{force}}
 
   - name: Copy css file under {stylesheet_base_dir}}/css
-    template: src=extensions.css.j2 dest="{{stylesheet_base_dir}}/css/extensions.css"
+    template: src=extensions.css.j2 dest="{{stylesheet_base_dir}}/css/extensions.css" force={{force}}
 
   - name: Webconsole configuration txt file to /etc/origin/master
-    template: src=webconsole_conf.txt.j2 dest={{stylesheet_base_dir}}/webconsole_conf.txt
+    template: src=webconsole_conf.txt.j2 dest={{stylesheet_base_dir}}/webconsole_conf.txt force={{force}}
     delegate_to: "{{groups.masters[0]}}"
     run_once: true
 
@@ -49,14 +49,14 @@
    
   - name: Configure master-config.xml to load new logo for web console
     shell: sed -e "$(grep -n assetConfig {{openshift_master_conf_dir}}/master-config.yaml |cut -d':' -f1)r {{stylesheet_base_dir}}/webconsole_conf.txt" -i {{openshift_master_conf_dir}}/master-config.yaml
-    when: "{{extension_conf_exist.stdout}} == 0 "
+    when: "{{extension_conf_exist.stdout}} == 0"
     delegate_to: "{{groups.masters[0]}}"
     run_once: true
 
   - name: Copy new master-config.yaml to all master servers
     synchronize:  src={{openshift_master_conf_dir}}/master-config.yaml dest={{openshift_master_conf_dir}}/master-config.yaml
     delegate_to: "{{groups.masters[0]}}"
-    when: "{{inventory_hostname != groups.masters[0]}}"
+    when: "{{inventory_hostname != groups.masters[0]}} and ( {{extension_conf_exist.stdout}} == 0  or {{force}} == true)"
 
   - name: Clean temp files in local
     file: path={{item}} state=absent

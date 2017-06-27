@@ -3,3 +3,4 @@ temp_dir: /tmp
 stylesheet_base_dir: /etc/origin/master/stylesheet
 master_url: master1.example.com:8443
 logo_img: /tmp/sample-openshift-ori.png
+force: false
