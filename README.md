@@ -17,7 +17,7 @@ Role Variables
 | stylesheet_base_dir       | /etc/origin/master/stylesheet         |         yes          | Where css/image file will place                                             |
 | logo_image                | /tmp/logo.png                         |         yes          | Logo image path                                                             |
 | temp_dir                  | /tmp                                  |         no           | Temp directory                                                              |
-| force                     | false                                 |         no           | Overwrite all static/configuration files                                    |
+| overwrite_force           | false                                 |         no           | Overwrite all static files                                                  |
 
 
 Dependencies
