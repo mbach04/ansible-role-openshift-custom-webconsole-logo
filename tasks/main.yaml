@@ -31,7 +31,7 @@
         - "{{stylesheet_base_dir}}/images"
 
   - name: Copy web console logo under {stylesheet_base_dir}}/images
-    copy: src={{logo_img}} dest="{{stylesheet_base_dir}}/images" force={{force}}
+    copy: src={{logo_img}} dest="{{stylesheet_base_dir}}/images" remote_src="true" force={{force}}
 
   - name: Copy css file under {stylesheet_base_dir}}/css
     template: src=extensions.css.j2 dest="{{stylesheet_base_dir}}/css/extensions.css" force={{force}}
