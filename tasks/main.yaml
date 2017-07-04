@@ -6,7 +6,7 @@
     register: date
 
   - name: Backup original master-config.yaml file
-    copy: src="{{openshift_master_conf_dir}}/master-config.yaml" dest="{{openshift_master_conf_dir}}/master-config.yaml_{{date.stdout}}" backup="yes"
+    copy: src="{{openshift_master_conf_dir}}/master-config.yaml" dest="{{openshift_master_conf_dir}}/master-config.yaml_{{date.stdout}}" backup="yes" remote_src="true"
 
   - name: Check if image exist
     stat: "path={{logo_img}} "
