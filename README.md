@@ -12,10 +12,9 @@ Role Variables
 
 | Name                      | Default value                         |        Requird       | Description                                                                 |
 |---------------------------|---------------------------------------|----------------------|-----------------------------------------------------------------------------|
-| openshift_master_conf_dir | /etc/origin/master                    |         yes          | Where openshift configuation dir is                                         |
-| master_url                | http://master1.example.com:8443       |         yes          | API Server URL                                                              |
-| stylesheet_base_dir       | /etc/origin/master/stylesheet         |         yes          | Where css/image file will place                                             |
-| logo_image                | /tmp/logo.png                         |         yes          | Logo image path                                                             |
+| openshift_master_conf_dir | /etc/origin/master                    |         no           | Where openshift configuation dir is                                         |
+| stylesheet_base_dir       | /etc/origin/master/stylesheet         |         no           | Where css/image file will place                                             |
+| logo_img                  | ' '                                   |         yes          | Logo image path                                                             |
 | temp_dir                  | /tmp                                  |         no           | Temp directory                                                              |
 | overwrite_force           | false                                 |         no           | Overwrite all static files                                                  |
 
@@ -34,8 +33,8 @@ Example Playbook
   hosts: masters
   gather_facts: false
 
-   roles:
-      - { role: ansible-role-openshift-custom-webconsole-logo, logo_img: "/tmp/logo.png", master_url: "master1.example.com:8443", stylesheet_base_dir: "/etc/origin/master/stylesheet" }
+  roles:
+    - { role: ansible-role-openshift-custom-webconsole-logo, logo_img: "/tmp/logo.png", stylesheet_base_dir: "/etc/origin/master/stylesheet" }
 ~~~
 
 Restart OpenShift Masters
