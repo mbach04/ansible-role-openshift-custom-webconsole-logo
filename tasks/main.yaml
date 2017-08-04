@@ -1,73 +1,108 @@
 ---
 # tasks file for ansible-role-openshift-custom-login-page
 
-  - name: Get timestamp
+  - name: Openshift branding | Get timestamp
     local_action: command date +"%Y%m%d_%H%M%S"
     register: date
     run_once: true
 
-  - name: Backup original master-config.yaml file
-    copy: src="{{openshift_master_conf_dir}}/master-config.yaml" dest="{{openshift_master_conf_dir}}/master-config.yaml_{{date.stdout}}" backup="yes" remote_src="true"
+  - name: Openshift branding | Backup original master-config.yaml file
+    copy: 
+      src: "{{ openshift_master_conf_dir }}/master-config.yaml"
+      dest: "{{ openshift_master_conf_dir }}/master-config.yaml_{{ date.stdout }}"
+      backup: yes
+      remote_src: true
 
-  - name: Check if image exist
-    stat: "path={{logo_img}} "
-    delegate_to: "{{groups.masters[0]}}"
+  - name: Openshift branding | Check if image exists
+    stat:
+      path: "{{ logo_img }}"
+    delegate_to: "{{ groups.masters[0] }}"
     register: stat_logo_img_exist
     run_once: true
 
-  - name: If the logo_img does not exit, it fails
-    fail: msg="logo image does not exist, please check it"
+  - name: Openshift branding | Fail when if logo_img doesn't exist
+    fail:
+      msg: "logo image does not exist, please check it"
     when: stat_logo_img_exist.stat.exists == false
     run_once: true
 
-  - name: Create temp dir if it does not exist
-    file: "path={{temp_dir}} state=directory"
-    delegate_to: "{{groups.masters[0]}}"
+  - name: Openshift branding | Create temp dir if it does not exist
+    file:
+      path: "{{ temp_dir }}"
+      state: directory
+    delegate_to: "{{ groups.masters[0] }}"
     run_once: true
 
-  - name: Create stylesheet dir if it does not exist
-    file: "path={{stylesheet_base_dir}} state=directory"
+  - name: Openshift branding | Create stylesheet dir if it does not exist
+    file:
+      path: "{{ stylesheet_base_dir }}"
+      state: directory
 
-  - name: Create CSS/Image folder
-    file: path={{item}} state=directory
+  - name: Openshift branding | Create CSS/Image folder
+    file:
+      path: "{{ item }}"
+      state: directory
     with_items:
-        - "{{stylesheet_base_dir}}/css"
-        - "{{stylesheet_base_dir}}/images"
+        - "{{ stylesheet_base_dir }}/css"
+        - "{{ stylesheet_base_dir }}/images"
 
-  - name: Copy web console logo under {stylesheet_base_dir}}/images
-    synchronize: src={{logo_img}} dest="{{stylesheet_base_dir}}/images"
-    delegate_to: "{{groups.masters[0]}}"
+  - name: Openshift branding | Copy web console logo under {stylesheet_base_dir}}/images
+    synchronize: 
+      src: "{{ logo_img }}"
+      dest: "{{ stylesheet_base_dir }}/images"
+    delegate_to: "{{ groups.masters[0] }}"
 
-  - name: Copy css file under {stylesheet_base_dir}}/css
-    template: src=extensions.css.j2 dest="{{stylesheet_base_dir}}/css/extensions.css" force={{overwrite_force}}
+  - name: Openshift branding | Copy css file under {stylesheet_base_dir}}/css
+    template:
+      src: extensions.css.j2
+      dest: "{{stylesheet_base_dir}}/css/extensions.css"
+      force: "{{ overwrite_force }}"
 
-  - name: Webconsole configuration txt file to /etc/origin/master
-    template: src=webconsole_conf.txt.j2 dest={{stylesheet_base_dir}}/webconsole_conf.txt force={{overwrite_force}}
+  - name: Openshift branding | Webconsole configuration txt file to /etc/origin/master
+    template: 
+      src: webconsole_conf.txt.j2
+      dest: "{{stylesheet_base_dir}}/webconsole_conf.txt"
+      force: "{{overwrite_force}}"
     delegate_to: "{{groups.masters[0]}}"
     run_once: true
 
-  - name: Check the configuration exist in master-config.yaml
-    shell: grep extensions {{openshift_master_conf_dir}}/master-config.yaml|wc -l
-    delegate_to: "{{groups.masters[0]}}"
+  - name: Openshift branding | Check the configuration exist in master-config.yaml
+    shell: grep extensions {{ openshift_master_conf_dir }}/master-config.yaml|wc -l
+    delegate_to: "{{ groups.masters[0] }}"
     register: extension_conf_exist
     run_once: true
    
-  - name: Configure master-config.xml to load new logo for web console
-    shell: sed -e "$(grep -n assetConfig {{openshift_master_conf_dir}}/master-config.yaml |cut -d':' -f1)r {{stylesheet_base_dir}}/webconsole_conf.txt" -i {{openshift_master_conf_dir}}/master-config.yaml
+  - name: Openshift branding | Configure master-config.xml to load new logo for web console
+    shell: sed -e "$(grep -n assetConfig {{ openshift_master_conf_dir}}/master-config.yaml |cut -d':' -f1)r {{ stylesheet_base_dir }}/webconsole_conf.txt" -i {{ openshift_master_conf_dir }}/master-config.yaml
     when: extension_conf_exist.stdout == '0'
-    delegate_to: "{{groups.masters[0]}}"
+    delegate_to: "{{ groups.masters[0] }}"
     run_once: true
 
-  - name: Copy new master-config.yaml to all master servers
-    synchronize:  src={{openshift_master_conf_dir}}/master-config.yaml dest={{openshift_master_conf_dir}}/master-config.yaml
-    delegate_to: "{{groups.masters[0]}}"
+  - name: Openshift branding | Copy new master-config.yaml to all master servers
+    synchronize:
+      src: "{{ openshift_master_conf_dir }}/master-config.yaml"
+      dest: "{{ openshift_master_conf_dir }}/master-config.yaml"
+    delegate_to: "{{ groups.masters[0] }}"
     when: "inventory_hostname != groups.masters[0] and extension_conf_exist.stdout == '0'"
 
-  - name: Clean temp files in local
-    file: path={{item}} state=absent
+  - name: Openshift branding | Clean temp files in local
+    file:
+      path: "{{ item }}"
+      state: absent
     with_items:
-        - "{{stylesheet_base_dir}}/webconsole_conf.txt"
+        - "{{ stylesheet_base_dir }}/webconsole_conf.txt"
         - "{{logo_img}}"
-    delegate_to: "{{groups.masters[0]}}"
+    delegate_to: "{{ groups.masters[0] }}"
     run_once: true
 
+  - name: Openshift branding | Restart Openshift service
+    systemd:
+      state: restarted
+      name: atomic-openshift-master
+    when: ha_environment
+
+  - name: Openshift branding | Restart Openshift service
+    systemd:
+      state: restarted
+      name: atomic-openshift-master-api
+    when: ha_environment == false

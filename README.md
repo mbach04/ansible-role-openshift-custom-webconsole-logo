@@ -1,7 +1,7 @@
 Ansible Role: Openshift Custom Webconsole Logo
 =========
 
-This role help change openshift webconsole logo.
+This role provides custom branding to the OpenShift web console
 
 Requirements
 ------------
@@ -17,7 +17,7 @@ Role Variables
 | logo_img                  | ' '                                   |         yes          | Logo image path                                                             |
 | temp_dir                  | /tmp                                  |         no           | Temp directory                                                              |
 | overwrite_force           | false                                 |         no           | Overwrite all static files                                                  |
-
+| ha_environment            | false                                 |         yes          | Is this a multi-master environment                                          |
 
 Dependencies
 ------------
@@ -35,18 +35,6 @@ Example Playbook
 
   roles:
     - { role: ansible-role-openshift-custom-webconsole-logo, logo_img: "/tmp/logo.png", stylesheet_base_dir: "/etc/origin/master/stylesheet" }
-~~~
-
-Restart OpenShift Masters
-----------
-~~~
-# Restart Openshift Master Server restart
-
-# Single Master
-ansible masters -m shell -a "systemctl restart atomic-openshift-master"
-
-# Multiple Masters
-ansible masters -m shell -a "systemctl restart atomic-openshift-master-api"
 ~~~
 
 License
