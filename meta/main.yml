@@ -1,7 +1,7 @@
 galaxy_info:
   author: jooho lee
   description: This role customizes the Openshift web console logo
-  company: your company (optional)
+  company: your company
   license: BSD/MIT
   platforms:
   - name: Fedora
